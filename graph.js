@@ -1,24 +1,26 @@
 function get_BGSdata_from_API() {
-    $.get("https://www.edsm.net/api-system-v1/factions?systemName=Karka&showHistory=1", {})
-    .done(function(data) {
+$.get("https://www.edsm.net/api-system-v1/factions?systemName=Karka&showHistory=1", {})
+  .done(function(data) {
 
-      let state = data.factions.map(faction => {
-        let dataArray = Object.keys(faction.influenceHistory).map(Number).slice(0, 8)
-        return {
-          name: faction.name,
-          data: dataArray,
-        }
-      })
-      console.log(JSON.stringify(state));
-      return state
-})
+    let state = data.factions.map(faction => {
+      let dataArray = Object.keys(faction.influenceHistory).map(Number).slice(0, 8)
+      return {
+        name: faction.name,
+        data: dataArray,
+      }
+    })
+    console.log(JSON.stringify(state));
+    document.getElementById("state").innerHTML = JSON.stringify(state)
+    return (state)
+  })
   .fail(function() {
-      console.log('erreur')
+    console.log('erreur')
   })
 }
 
 let dataIn = () => {
-  return get_BGSdata_from_API()
+  let state = get_BGSdata_from_API()
+  return state;
 }
 
 function draw_graph() {
@@ -69,4 +71,5 @@ function draw_graph() {
 
 $(document).ready(function() {
   draw_graph()
+  console.log(get_BGSdata_from_API())
 })
