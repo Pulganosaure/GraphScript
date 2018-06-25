@@ -1,75 +1,31 @@
-function get_BGSdata_from_API() {
-$.get("https://www.edsm.net/api-system-v1/factions?systemName=Karka&showHistory=1", {})
-  .done(function(data) {
+function draw_chart() {
+  $.get("https://www.edsm.net/api-system-v1/factions?systemName=Karka&showHistory=1", function(data) {
 
-    let state = data.factions.map(faction => {
-      let dataArray = Object.keys(faction.influenceHistory).map(Number).slice(0, 8)
-      return {
-        name: faction.name,
-        data: dataArray,
-      }
-    })
-    console.log(JSON.stringify(state));
-    document.getElementById("state").innerHTML = JSON.stringify(state)
-    return (state)
-  })
-  .fail(function() {
-    console.log('erreur')
-  })
-}
-
-let dataIn = () => {
-  let state = get_BGSdata_from_API()
-  return state;
-}
-
-function draw_graph() {
-    Highcharts.chart('container', {
-        title: {
-            text: 'Influence du système'
-        },
-        subtitle: {
-            text: 'system'
-        },
-        yAxis: {
-            title: {
-                text: 'Influence'
-            }
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle'
-        },
-        plotOptions: {
-            series: {
-                label: {
-                    connectorAllowed: false
-                },
-                pointStart: 2010
-            }
-        },
-        series: dataIn(),
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 500
-                },
-                chartOptions: {
-                    legend: {
-                      layout: 'horizontal',
-                      align: 'center',
-                      verticalAlign: 'bottom'
-                    }
-                }
-            }]
+    let options={
+      chart: {
+      renderTo: 'container',
+      type: 'line',
+    },
+      xAxis:{
+      type: 'datetime',
+    },
+      yAxis: {
+      title: { text: 'test'},
+    },
+      series: data.factions.map(faction => {
+        let dataArray = Object.keys(faction.influenceHistory).map(Number).slice(0, 8)
+        return {
+          name: faction.name,
+          data: dataArray,
         }
-
+      })
     }
-    )
+
+    var chart = new Highcharts.Chart(options);
+    console.log(options);
+    })
 }
 
 $(document).ready(function() {
-  draw_graph()
-  console.log(get_BGSdata_from_API())
+  draw_chart()
 })
