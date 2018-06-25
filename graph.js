@@ -1,19 +1,34 @@
-const nbrvalue = 10;
+function get_BGSdata_from_API() {
+    $.get("https://www.edsm.net/api-system-v1/factions?systemName=Karka&showHistory=1", {})
+    .done(function(data) {
 
+      let state = data.factions.map(faction => {
+        let dataArray = Object.keys(faction.influenceHistory).map(Number).slice(0, 8)
+        return {
+          name: faction.name,
+          data: dataArray,
+        }
+      })
+      console.log(JSON.stringify(state));
+      return state
+})
+  .fail(function() {
+      console.log('erreur')
+  })
+}
 
-function draw_graph()
-{
+let dataIn = () => {
+  return get_BGSdata_from_API()
+}
 
-    console.log(Highcharts.chart('container', {
-
+function draw_graph() {
+    Highcharts.chart('container', {
         title: {
             text: 'Influence du système'
         },
-
         subtitle: {
             text: 'system'
         },
-
         yAxis: {
             title: {
                 text: 'Influence'
@@ -24,7 +39,6 @@ function draw_graph()
             align: 'right',
             verticalAlign: 'middle'
         },
-
         plotOptions: {
             series: {
                 label: {
@@ -33,9 +47,7 @@ function draw_graph()
                 pointStart: 2010
             }
         },
-
-        series:   get_BGSdata_from_API(),
-
+        series: dataIn(),
         responsive: {
             rules: [{
                 condition: {
@@ -43,54 +55,18 @@ function draw_graph()
                 },
                 chartOptions: {
                     legend: {
-                        layout: 'horizontal',
-                        align: 'center',
-                        verticalAlign: 'bottom'
+                      layout: 'horizontal',
+                      align: 'center',
+                      verticalAlign: 'bottom'
                     }
                 }
             }]
         }
 
     }
-    ));
+    )
 }
 
-
-
-function get_BGSdata_from_API()
-{
-    $.get("https://www.edsm.net/api-system-v1/factions?systemName=Karka&showHistory=1", {})
-    .done(function(data)
-    {
-        series = [];
-        for(var i = 0; i <= Object.keys(data).length; i++) 
-        {
-           influences_Data = data['factions'][i]['influenceHistory'];
-           influences = [];
-
-
-           for(var j in influences_Data)
-           {
-            influences.push(influences_Data [j] * 100);
-        }
-        influences = influences.slice(influences.length - nbrvalue);
-        series.push( [['name',data['factions'][i]['name']], ['data',influences]] );
-
-    }
-
-            console.log(series);
-
-
-    return series;
+$(document).ready(function() {
+  draw_graph()
 })
-    .fail(function() {
-        console.log('erreur');
-    });
-}
-
-
-
-$(document).ready(function()
-{
-    draw_graph();
-});
